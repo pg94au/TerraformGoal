@@ -62,6 +62,13 @@ resource "aws_security_group" "tf-allow-ssh-from-home" {
   }
 }
 
+# Store a sample parameter in Parameter Store
+resource "aws_ssm_parameter" "tf-paramter-foo" {
+  name  = "foo"
+  type  = "String"
+  value = "bar"
+}
+
 # An Ubuntu 20.04 instance
 resource "aws_instance" "tf-instance" {
   ami                         = "ami-0801628222e2e96d6"

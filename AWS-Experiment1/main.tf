@@ -57,6 +57,12 @@ resource "aws_security_group" "tf-allow-ssh-from-home" {
     protocol    = "tcp"
     cidr_blocks = ["206.248.172.36/32"]
   }
+  ingress {
+    from_port   = 0
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["206.248.172.36/32"]
+  }
   tags = {
     Name = "tf-allow-ssh-from-home"
   }
@@ -69,15 +75,31 @@ resource "aws_ssm_parameter" "tf-paramter-foo" {
   value = "bar"
 }
 
-# An Ubuntu 20.04 instance
-resource "aws_instance" "tf-instance" {
-  ami                         = "ami-0801628222e2e96d6"
+# Create a launch template for a bitnami nginx EC2 instance
+resource "aws_launch_template" "tf-launch-template" {
+  name                        = "tf-launch-template"
+  update_default_version      = true
+  image_id                    = "ami-0a09ff033117a19ea"
   instance_type               = "t2.nano"
-  subnet_id                   = aws_subnet.tf-public-subnet-1a.id
-  associate_public_ip_address = true
   key_name                    = "MyKeyPair"
-  vpc_security_group_ids      = [aws_security_group.tf-allow-ssh-from-home.id]
-  tags = {
-    Name = "TF_Instance"
+  network_interfaces {
+    associate_public_ip_address = true
+    subnet_id                   = aws_subnet.tf-public-subnet-1a.id
+    security_groups             = [aws_security_group.tf-allow-ssh-from-home.id] 
   }
+#  vpc_security_group_ids      = [aws_security_group.tf-allow-ssh-from-home.id]
 }
+
+# A bitnami nginx instance based on Debian (login username "bitnami")
+# resource "aws_instance" "tf-instance" {
+# #  ami                         = "ami-0801628222e2e96d6"
+#   ami                         = "ami-0a09ff033117a19ea"
+#   instance_type               = "t2.nano"
+#   subnet_id                   = aws_subnet.tf-public-subnet-1a.id
+#   associate_public_ip_address = true
+#   key_name                    = "MyKeyPair"
+#   vpc_security_group_ids      = [aws_security_group.tf-allow-ssh-from-home.id]
+#   tags = {
+#     Name = "TF_Instance"
+#   }
+# }

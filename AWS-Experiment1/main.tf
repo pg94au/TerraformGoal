@@ -89,6 +89,18 @@ resource "aws_launch_template" "tf-launch-template" {
   }
 }
 
+# Create an auto-scaling group to manage instances based on our bitnami nginx launch template
+resource "aws_autoscaling_group" "tf-autoscaling-group" {
+  name = "tf-autoscaling-group"
+  desired_capacity = 2
+  max_size = 2
+  min_size = 2
+  launch_template {
+    id = aws_launch_template.tf-launch-template.id
+    version = "$Latest"
+  }
+}
+
 # A bitnami nginx instance based on Debian (login username "bitnami")
 # resource "aws_instance" "tf-instance" {
 # #  ami                         = "ami-0801628222e2e96d6"

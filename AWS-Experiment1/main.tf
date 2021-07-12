@@ -87,7 +87,6 @@ resource "aws_launch_template" "tf-launch-template" {
     subnet_id                   = aws_subnet.tf-public-subnet-1a.id
     security_groups             = [aws_security_group.tf-allow-ssh-from-home.id] 
   }
-#  vpc_security_group_ids      = [aws_security_group.tf-allow-ssh-from-home.id]
 }
 
 # A bitnami nginx instance based on Debian (login username "bitnami")
